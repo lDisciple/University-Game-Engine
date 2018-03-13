@@ -49,6 +49,7 @@ public class DisplayManager {
         } catch (LWJGLException ex) {
             System.err.println("Could not create Display");
             ex.printStackTrace(System.err);
+            System.exit(0);
         }
     }
     

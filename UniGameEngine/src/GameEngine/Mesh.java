@@ -16,8 +16,8 @@ public class Mesh {
     
     public static Mesh createMesh(float[] vertices, int[] indices){
         int vaoId = Loader.createVAO();
-        Loader.storeDataInAttributeList(vaoId, 0, vertices,3);
         Loader.bindIndicesBuffer(vaoId, indices);
+        Loader.storeDataInAttributeList(vaoId, 0, vertices,3);
         Mesh mesh = new Mesh(vaoId, indices.length);
         return mesh;
     }
