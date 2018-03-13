@@ -5,20 +5,20 @@ import GameEngine.DisplayManager;
 import GameEngine.Loader;
 import GameEngine.Mesh;
 import GameEngine.Renderer;
-import Shaders.StaticShader;
-import ThinMatrixCode.Tut5.renderEngine.RawModel;
+import GameEngine.ShaderProgram;
+import Shaders.TestShader;
 import org.lwjgl.opengl.Display;
 
 /**
  *
  * @author jonathan
  */
-public class MeshShaderTest {
+public class ShaderTest {
     public static void main(String[] args) {
-        DisplayManager.create("Basic rendering Test (Windows only)");
+        DisplayManager.create("Basic Shading Test");
         
         Renderer renderer = new Renderer();
-        StaticShader shader = new StaticShader();
+        ShaderProgram shader = new TestShader();
         
         float[] vertices = new float[]{
             -0.5f, 0.3f, 0,
@@ -38,7 +38,7 @@ public class MeshShaderTest {
             //Render
             renderer.prepare();
             shader.start();
-            renderer.RenderMesh(mesh);
+            renderer.renderMesh(mesh);
             shader.stop();
             DisplayManager.update();
         }

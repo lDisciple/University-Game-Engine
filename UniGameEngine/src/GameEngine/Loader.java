@@ -1,6 +1,9 @@
 
 package GameEngine;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
@@ -10,6 +13,8 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
+import org.newdawn.slick.opengl.Texture;
+import org.newdawn.slick.opengl.TextureLoader;
 
 /**
  *
@@ -18,11 +23,31 @@ import org.lwjgl.opengl.GL30;
 public class Loader {
     private static final List<Integer> vaoList = new ArrayList();
     private static final List<Integer> vboList = new ArrayList();
+    private static final List<Integer> textureList = new ArrayList();
     
     public static int createVAO(){
         int vaoId = GL30.glGenVertexArrays();
         vaoList.add(vaoId);
         return vaoId;
+    }
+    
+    public static int loadTexture(String filename){
+        Texture texture =  null;
+        try {
+            InputStream stream = Loader.class.getResourceAsStream("/Assets/"+filename);
+            if(stream == null){
+                throw new FileNotFoundException("/Assets/"+filename);
+            }
+            texture = TextureLoader.getTexture("PNG", stream);
+        } catch (IOException ex) {
+            System.err.println("Could not load texture: /Assets/"+filename);
+            ex.printStackTrace();
+            //TODO Add default texture here
+            System.exit(0);
+        }
+        int textureId = texture.getTextureID();
+        textureList.add(textureId);
+        return textureId;
     }
     
     public static void storeDataInAttributeList(int vaoId, int attribNumber, float[] data){
@@ -74,6 +99,9 @@ public class Loader {
     public static void cleanUp(){
         for (Integer vao : vaoList) {
             GL30.glDeleteVertexArrays(vao);
+        }
+        for (Integer tex : textureList) {
+            GL30.glDeleteVertexArrays(tex);
         }
         for (Integer vbo : vboList) {
             GL30.glDeleteVertexArrays(vbo);

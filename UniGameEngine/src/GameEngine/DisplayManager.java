@@ -36,9 +36,9 @@ public class DisplayManager {
     public static void create(String title,int w, int h){
         loadNatives();
         
-        ContextAttribs attribs = new ContextAttribs(3, 2);
-        attribs.withForwardCompatible(true);
-        attribs.withProfileCore(true);
+        ContextAttribs attribs = new ContextAttribs(3, 2)
+                .withForwardCompatible(true)
+                .withProfileCore(true);
         
         DisplayMode dm = new DisplayMode(w, h);
         try {
