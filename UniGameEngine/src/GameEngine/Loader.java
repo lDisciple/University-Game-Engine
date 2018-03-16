@@ -1,6 +1,8 @@
 
 package GameEngine;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,6 +43,25 @@ public class Loader {
             texture = TextureLoader.getTexture("PNG", stream);
         } catch (IOException ex) {
             System.err.println("Could not load texture: /Assets/"+filename);
+            ex.printStackTrace();
+            //TODO Add default texture here
+            System.exit(0);
+        }
+        int textureId = texture.getTextureID();
+        textureList.add(textureId);
+        return textureId;
+    }
+    
+    public static int loadExternalTexture(String filename){
+        Texture texture =  null;
+        try {
+            InputStream stream = new FileInputStream(new File(filename));
+            if(stream == null){
+                throw new FileNotFoundException(filename);
+            }
+            texture = TextureLoader.getTexture("PNG", stream);
+        } catch (IOException ex) {
+            System.err.println("Could not load texture:"+filename);
             ex.printStackTrace();
             //TODO Add default texture here
             System.exit(0);
