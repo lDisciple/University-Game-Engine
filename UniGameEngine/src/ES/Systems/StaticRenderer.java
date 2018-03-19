@@ -4,6 +4,7 @@ package ES.Systems;
 import ES.Components.StaticModel;
 import ES.Components.Transform;
 import ES.EntitySystem;
+import GameEngine.Mesh;
 import GameEngine.Model;
 import Shaders.StaticShader;
 import Utilities.MatrixMath;
@@ -20,11 +21,13 @@ import org.lwjgl.opengl.GL30;
  * @author jonathan
  */
 public class StaticRenderer {
-    private HashMap<Integer,LinkedList<UUID>> modelHolder = new HashMap();
+    private HashMap<Model,LinkedList<UUID>> modelHolder = new HashMap();
     private StaticShader shader;
     
     public StaticRenderer(StaticShader shader){
         this.shader = shader;
+        GL11.glEnable(GL11.GL_CULL_FACE);
+        GL11.glCullFace(GL11.GL_BACK);
     }
     
     public void prepare(){
@@ -38,21 +41,29 @@ public class StaticRenderer {
             list.clear();
         }
         for (UUID uuid : es.getEntitiesWith(StaticModel.class, Transform.class)) {//Skip checking entities.
-            int vaoId = es.getComponent(uuid, StaticModel.class).getModel().getMesh().getVaoId();
-            if(modelHolder.get(vaoId) == null){
-                modelHolder.put(vaoId, new LinkedList());
+            Model model = es.getComponent(uuid, StaticModel.class).getModel();
+            if(modelHolder.get(model) == null){
+                modelHolder.put(model, new LinkedList());
             }
-            modelHolder.get(vaoId).add(uuid);
+            if(es.getComponent(uuid, StaticModel.class).isVisible()){
+                modelHolder.get(model).add(uuid);
+            }
         }
-        for (Integer vaoId : modelHolder.keySet()) {
-            LinkedList<UUID> entities = modelHolder.get(vaoId);
-            GL30.glBindVertexArray(vaoId);
+        for (Model model : modelHolder.keySet()) {
+            LinkedList<UUID> entities = modelHolder.get(model);
+            if(entities.isEmpty()){
+                modelHolder.remove(model);
+                continue;
+            }
+            Mesh mesh = model.getMesh();
+            GL30.glBindVertexArray(mesh.getVaoId());
             GL20.glEnableVertexAttribArray(0);
             GL20.glEnableVertexAttribArray(1);
             GL20.glEnableVertexAttribArray(2);
             GL13.glActiveTexture(GL13.GL_TEXTURE0);
+            shader.loadMaterialShine(model.getReflectivity(), model.getShineDamper());
+            GL11.glBindTexture(GL11.GL_TEXTURE_2D, model.getTextureId());
             for (UUID uuid : entities) {
-                Model model = es.getComponent(uuid, StaticModel.class).getModel();
                 Transform position = es.getComponent(uuid, Transform.class);
                 shader.loadTransformationMatrix(MatrixMath.createTransformationMatrix(
                         position.getPosition(),
@@ -60,14 +71,17 @@ public class StaticRenderer {
                         position.getRotationY(),
                         position.getRotationZ(),
                         position.getScale()));
-                shader.loadMaterialShine(model.getReflectivity(), model.getShineDamper());
-                GL11.glBindTexture(GL11.GL_TEXTURE_2D, model.getTextureId());
-                GL11.glDrawElements(GL11.GL_TRIANGLES, model.getMesh().getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
+                GL11.glDrawElements(GL11.GL_TRIANGLES, mesh.getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
             }
             GL20.glDisableVertexAttribArray(0);
             GL20.glDisableVertexAttribArray(1);
             GL20.glDisableVertexAttribArray(2);
             GL30.glBindVertexArray(0);
         }
+        
+    }
+    
+    public void cleanUp(){
+        shader.cleanUp();
     }
 }
