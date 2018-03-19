@@ -19,7 +19,7 @@ void main(void){
     vec3 unitNormal = normalize(surfaceNormal);
     vec3 unitToLight = normalize(toLightVector);
     float dotLight = dot(unitNormal,unitToLight);
-    float brightness = max(0,dotLight);
+    float brightness = max(0.2,dotLight);
     vec3 diffuse = lightColor * brightness;
 
     //Specular Lighting
