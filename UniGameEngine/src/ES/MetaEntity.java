@@ -21,6 +21,10 @@ public class MetaEntity {
         this.id = EntitySystem.generateEntity();
         this.parent = parent;
     }
+
+    public UUID getId() {
+        return id;
+    }
     
     /**
      * Get the component {@code c}

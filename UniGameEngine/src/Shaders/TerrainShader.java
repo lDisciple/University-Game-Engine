@@ -11,9 +11,9 @@ import org.lwjgl.util.vector.Matrix4f;
  *
  * @author jonathan
  */
-public class StaticShader extends ShaderProgram{
-    private static final String VERTEX_FILE = StaticShader.class.getResource("/Shaders/Static.vshade").getFile();
-    private static final String FRAGMENT_FILE = StaticShader.class.getResource("/Shaders/Static.fshade").getFile();
+public class TerrainShader extends ShaderProgram{
+    private static final String VERTEX_FILE = TerrainShader.class.getResource("/Shaders/Terrain.vshade").getFile();
+    private static final String FRAGMENT_FILE = TerrainShader.class.getResource("/Shaders/Terrain.fshade").getFile();
     
     private int loc_transMatrix;
     private int loc_projMatrix;
@@ -23,7 +23,7 @@ public class StaticShader extends ShaderProgram{
     private int loc_reflectivity;
     private int loc_shineDamper;
     
-    public StaticShader(){
+    public TerrainShader(){
         super(VERTEX_FILE, FRAGMENT_FILE);
     }
     

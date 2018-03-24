@@ -9,13 +9,17 @@ import org.lwjgl.util.vector.Vector3f;
  * @author jonathan
  */
 public class Camera {
-    private Vector3f pos = new Vector3f();
+    private Vector3f pos;
     private float pitch,yaw,roll;
     private float scale;
     
     public Camera(){
-        
+        pos = new Vector3f();
     }
+    public Camera(float x, float y, float z){
+        pos = new Vector3f(x, y, z);
+    }
+    
     public void move(){
         if(Keyboard.isKeyDown(Keyboard.KEY_W)){
             pos.z -= 0.02f;

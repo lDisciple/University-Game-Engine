@@ -14,10 +14,12 @@ public class Transform extends Component{
 
     public Transform() {
         position = new Vector3f();
+        scale = 1;
     }
 
     public Transform(float x, float y, float z) {
         position = new Vector3f(x,y,z);
+        scale = 1;
     }
 
     public Transform(float x, float y, float z, float rx, float ry, float rz, float scale) {
@@ -74,10 +76,12 @@ public class Transform extends Component{
 
     public void setRotationX(float rx) {
         this.rx = rx;
+        this.rx %= 360;
     }
 
     public void changeRotationX(float drx) {
         this.rx += drx;
+        this.rx %= 360;
     }
 
     public float getRotationY() {
@@ -86,10 +90,12 @@ public class Transform extends Component{
 
     public void setRotationY(float ry) {
         this.ry = ry;
+        this.ry %= 360;
     }
 
     public void changeRotationY(float dry) {
         this.ry += dry;
+        this.ry %= 360;
     }
 
     public float getRotationZ() {
@@ -98,10 +104,12 @@ public class Transform extends Component{
 
     public void setRotationZ(float rz) {
         this.rz = rz;
+        this.rz %= 360;
     }
 
     public void changeRotationZ(float drz) {
         this.rz += drz;
+        this.rz %= 360;
     }
 
     public float getScale() {

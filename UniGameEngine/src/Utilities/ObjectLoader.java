@@ -164,7 +164,7 @@ public class ObjectLoader {
         normArr[vertPointer*3+2] = normals.get(normalPointer).z;
     }
 //</editor-fold>
-    //<editor-fold defaultstate="collapsed" desc="Basic loading (No splitting)">
+    //<editor-fold defaultstate="collapsed" desc="Goxel Loading with splitting and edge seams">
     
     public static Model loadGoxelOBJ(String file){
         try {

@@ -19,7 +19,7 @@ void main(void){
     vec3 unitNormal = normalize(surfaceNormal);
     vec3 unitToLight = normalize(toLightVector);
     float dotLight = dot(unitNormal,unitToLight);
-    float brightness = max(0.2,dotLight);
+    float brightness = max(0.8,dotLight);
     vec3 diffuse = lightColor * brightness;
 
     //Specular Lighting
@@ -29,7 +29,7 @@ void main(void){
     specularFactor = max(0,specularFactor);
     float dampedFactor = pow(specularFactor, shineDamper);
     vec3 finalSpecular = dampedFactor * reflectivity * lightColor;
-
+    //out_Color = vec4(pass_texCoords,0,1);
+    out_Color = texture(texture_sampler, pass_texCoords);
     //out_Color = vec4(diffuse,1) * texture(texture_sampler, pass_texCoords) + vec4(finalSpecular,0);
-    out_Color = vec4(pass_normal/2+ 0.5,1);
 }

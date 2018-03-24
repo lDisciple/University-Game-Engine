@@ -3,7 +3,9 @@ package ES;
 
 import ES.Components.StaticModel;
 import ES.Components.Transform;
+import ES.Components.UserControlled;
 import ES.Systems.StaticRenderer;
+import ES.Systems.UserControl;
 import GameEngine.DisplayManager;
 import GameEngine.Loader;
 import GameEngine.Model;
@@ -39,14 +41,21 @@ public class ESTest1 {
         MetaEntity entity = new MetaEntity(es);
         entity.add(new Transform(0, 0, -5, 0, 0, 0, 0.1f));
         entity.add(new StaticModel(model));
+        entity.add(new UserControlled());
+        
+        UserControl userControlSystem = new UserControl();
         
         Light light = new Light(new Vector3f(0,0,9), new Vector3f(1,1,1));
         Camera camera = new Camera();
+        long lastTime = System.currentTimeMillis();
         while (!Display.isCloseRequested()) {
             //Game logic
-            camera.move();
+            long timePassed = System.currentTimeMillis() - lastTime;
+            //camera.move();
+            userControlSystem.update(es, timePassed);
             entity.getAs(Transform.class).changeRotationY(1);
             entity.getAs(Transform.class).changeRotationZ(1);
+            lastTime = System.currentTimeMillis();
             //Render
             renderer.prepare();
             shader.start();
@@ -55,10 +64,9 @@ public class ESTest1 {
             shader.loadLight(light);
             //END
             renderer.render(es);
-            shader.stop();
             DisplayManager.update();
         }
-        shader.cleanUp();
+        renderer.cleanUp();
         Loader.cleanUp();
         DisplayManager.close();
     }

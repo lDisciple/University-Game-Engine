@@ -2,11 +2,12 @@
 package ES.Systems;
 
 import ES.Components.StaticModel;
+import ES.Components.Terrain;
 import ES.Components.Transform;
 import ES.EntitySystem;
 import GameEngine.Mesh;
 import GameEngine.Model;
-import Shaders.StaticShader;
+import Shaders.TerrainShader;
 import Utilities.MatrixMath;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -20,11 +21,11 @@ import org.lwjgl.opengl.GL30;
  *
  * @author jonathan
  */
-public class StaticRenderer extends Renderer{
-    private HashMap<Model,LinkedList<UUID>> modelHolder = new HashMap();
-    private StaticShader shader;
+public class TerrainRenderer extends Renderer{
+    private HashMap<Terrain,LinkedList<UUID>> modelHolder = new HashMap();
+    private TerrainShader shader;
     
-    public StaticRenderer(StaticShader shader){
+    public TerrainRenderer(TerrainShader shader){
         this.shader = shader;
         GL11.glEnable(GL11.GL_CULL_FACE);
         GL11.glCullFace(GL11.GL_BACK);
@@ -34,30 +35,26 @@ public class StaticRenderer extends Renderer{
         for (LinkedList<UUID> list : modelHolder.values()) {
             list.clear();
         }
-        modelHolder.clear();//Check
-        for (UUID uuid : es.getEntitiesWith(StaticModel.class, Transform.class)) {//Skip checking entities.
-            Model model = es.getComponent(uuid, StaticModel.class).getModel();
-            if(modelHolder.get(model) == null){
-                modelHolder.put(model, new LinkedList());
+        for (UUID uuid : es.getEntitiesWith(Terrain.class, Transform.class)) {//Skip checking entities.
+            Terrain terrain = es.getComponent(uuid, Terrain.class);
+            if(modelHolder.get(terrain) == null){
+                modelHolder.put(terrain, new LinkedList());
             }
-            if(es.getComponent(uuid, StaticModel.class).isVisible()){
-                modelHolder.get(model).add(uuid);
-            }
+            modelHolder.get(terrain).add(uuid);
         }
-        for (Model model : modelHolder.keySet()) {
-            LinkedList<UUID> entities = modelHolder.get(model);
+        for (Terrain terrain : modelHolder.keySet()) {
+            LinkedList<UUID> entities = modelHolder.get(terrain);
             if(entities.isEmpty()){
-                modelHolder.remove(model);
+                modelHolder.remove(terrain);
                 continue;
             }
-            Mesh mesh = model.getMesh();
+            Mesh mesh = terrain.getMesh();
             GL30.glBindVertexArray(mesh.getVaoId());
             GL20.glEnableVertexAttribArray(0);
             GL20.glEnableVertexAttribArray(1);
             GL20.glEnableVertexAttribArray(2);
             GL13.glActiveTexture(GL13.GL_TEXTURE0);
-            shader.loadMaterialShine(model.getReflectivity(), model.getShineDamper());
-            GL11.glBindTexture(GL11.GL_TEXTURE_2D, model.getTextureId());
+            GL11.glBindTexture(GL11.GL_TEXTURE_2D, terrain.getTextureId());
             for (UUID uuid : entities) {
                 Transform position = es.getComponent(uuid, Transform.class);
                 shader.loadTransformationMatrix(MatrixMath.createTransformationMatrix(
